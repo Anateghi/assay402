@@ -47,7 +47,7 @@ On x402 with USDC:
 - **Facilitator fees:** hosted facilitators may have free tiers and per-transaction fees above them. Read the current [CDP x402 pricing](https://docs.cdp.coinbase.com/x402/welcome) or the terms of whichever facilitator you use.
 - **Per-payment overhead dominates at tiny prices.** If a settlement costs a meaningful fraction of a $0.001 call, either raise the price, sell prepaid bundles, or use a scheme that batches settlement.
 
-This is why we offer **two rails**:
+This is why we're designing Assay around **two rails**. Only x402 is live today; prepaid API keys are planned, not built yet:
 
 | | x402 per call | Prepaid API key |
 |---|---|---|
@@ -56,13 +56,13 @@ This is why we offer **two rails**:
 | Per-call overhead | one signed authorization + settlement | a ledger decrement |
 | Latency | extra round trip on first call | none |
 
-The price per call is the same on both rails, so no one is penalized for choosing either.
+When prepaid keys ship, the price per call will be the same on both rails, so no one is penalized for choosing either.
 
 ## 5. Make the price machine-readable everywhere
 - In the **402 response**: `amount`, `asset`, `network`, and `payTo`, as x402 requires.
 - In **tool descriptions** for MCP servers ("Costs $0.003 per successful call").
 - In an **OpenAPI** extension or a public `/pricing.json`, so directories and agents can compare.
-- In **response headers** on keyed calls, e.g. `X-Cost-USD: 0.003` and `X-Balance-USD: 4.217`, so agents can track their budgets.
+- In **response headers** on keyed calls (once you offer prepaid keys), e.g. a cost header and a remaining-balance header, so agents can track their budgets.
 
 ## 6. Don't do these
 - **Surprise prices.** Changing a price without notice breaks agents that hard-coded budgets. Version your price list and announce changes in advance.
