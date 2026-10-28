@@ -24,11 +24,14 @@ describe("robots.txt (RFC 9309)", () => {
 
 describe("SSRF guards", () => {
   it("flags private ranges", () => {
-    for (const ip of ["127.0.0.1", "10.1.2.3", "192.168.1.1", "172.16.0.1", "169.254.169.254", "::1", "fd00::1", "::ffff:127.0.0.1", "100.64.0.1"]) expect(isPrivateAddress(ip)).toBe(true);
-    for (const ip of ["8.8.8.8", "1.1.1.1", "2606:4700::1111"]) expect(isPrivateAddress(ip)).toBe(false);
+    for (const ip of ["127.0.0.1", "10.1.2.3", "192.168.1.1", "172.16.0.1", "169.254.169.254", "::1", "fd00::1", "::ffff:127.0.0.1", "100.64.0.1",
+      "::ffff:7f00:1", "::7f00:1", "64:ff9b::7f00:1", "64:ff9b::a9fe:a9fe", "2002:7f00:1::", "fe80::1%eth0", "198.18.0.1", "ff02::1"]) expect(isPrivateAddress(ip)).toBe(true);
+    for (const ip of ["8.8.8.8", "1.1.1.1", "2606:4700::1111", "::ffff:8.8.8.8", "64:ff9b::808:808", "2a00:1450:4001::200e"]) expect(isPrivateAddress(ip)).toBe(false);
   });
   it("validates urls", () => {
     expect(() => validateUrl("http://user:pw@example.com")).toThrow();
+    for (const u of ["http://[::ffff:127.0.0.1]/", "http://[::ffff:7f00:1]/", "http://[64:ff9b::7f00:1]/", "http://localhost./", "http://a.localhost./", "http://2130706433/", "http://0x7f.1/"])
+      expect(() => validateUrl(u)).toThrow();
     expect(validateUrl("https://example.com/a?b=1").hostname).toBe("example.com");
   });
 });
