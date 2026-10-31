@@ -104,7 +104,7 @@ Assay does not offer an EDGAR endpoint yet; today it ships web extraction and PD
 The example values come from Apple's FY2023 10-K. Verify them against the [filing index](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193&type=10-K) yourself. Every number carries its concept and period, so the agent can cite it, and `source_url` points back to the primary document.
 
 ## Do it yourself or call an API
-Everything above is doable with free official data, and for a single company it's a good weekend project. Calling an endpoint makes sense when you need the section splitting, fact deduplication, concept mapping, caching, and rate-limit discipline maintained for you, at a price per call. An EDGAR endpoint is on the Assay roadmap, not live. Until then, you can fetch a filing's primary HTML document through [`/v1/extract`](/docs/extract/) to get clean markdown, and do the section splitting in your own code.
+Everything above is doable with free official data, and for a single company it's a good weekend project. Calling an endpoint makes sense when you need the section splitting, fact deduplication, concept mapping, caching, and rate-limit discipline maintained for you, at a price per call. An EDGAR endpoint is on the Assay roadmap, not live. Until then, fetch filings yourself with a declared User-Agent. Assay's [`/v1/extract`](/docs/extract/) fetcher currently gets a `403` from sec.gov (see [SEC EDGAR User-Agent and rate limit](/blog/sec-edgar-user-agent-rate-limit)), so convert the HTML locally and do the section splitting in your own code.
 
 ### Disclaimer
 This is not investment advice. Filings can contain errors, so always cite the source document.
