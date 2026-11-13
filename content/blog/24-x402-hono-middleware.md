@@ -192,7 +192,7 @@ Assay's own suite ([`test/payment.test.ts`](https://github.com/Anateghi/assay402
 
 Assay is this pattern with two real handlers: [`GET /v1/extract`](/docs/extract/) (a web page as clean markdown plus metadata, **$0.003** per call) and [`POST /v1/pdf/text`](/docs/pdf-text/) (per-page PDF text, **$0.01** per call). Both run on **Base Sepolia testnet** only for now. Payment is x402 only, and prepaid API keys are planned but not live. The full exchange, including the 409 replay rule and the settlement-failure case, is documented in [payments (x402)](/docs/payments/). Prices are published at [`/pricing.json`]({{ORIGIN}}/pricing.json) and [`/.well-known/x402`]({{ORIGIN}}/.well-known/x402), and the source is MIT-licensed [on GitHub](https://github.com/Anateghi/assay402).
 
-**Related:** [What is x402?](/blog/what-is-x402-http-402) · [x402 v2 headers](/blog/x402-v2-headers-payment-signature) · [The x402 exact scheme on EVM](/blog/x402-exact-scheme-evm) · [x402 vs API keys](/blog/x402-vs-api-keys) · [x402 Python client](/blog/x402-python-client)
+**Related:** [What is x402?](/blog/what-is-x402-http-402) · [x402 idempotency with payment-identifier](/blog/x402-payment-identifier-idempotency) · [x402 v2 headers](/blog/x402-v2-headers-payment-signature) · [The x402 exact scheme on EVM](/blog/x402-exact-scheme-evm) · [x402 vs API keys](/blog/x402-vs-api-keys) · [x402 Python client](/blog/x402-python-client)
 
 ### Sources
 - x402 seller quickstart (Hono setup, RouteConfig, schemes, mainnet facilitator note): https://docs.x402.org/getting-started/quickstart-for-sellers
