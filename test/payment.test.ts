@@ -127,3 +127,32 @@ describe("discovery", () => {
     expect((await (await app.request("/.well-known/x402")).json()).resources).toHaveLength(2);
   });
 });
+
+describe("CORS for browser agents", () => {
+  // Fetch-spec CORS-safelisted request headers never need preflight approval.
+  const SAFELISTED = new Set(["accept", "accept-language", "content-language", "content-type", "range"]);
+  it("preflight allows every non-safelisted header @x402/fetch sends on the paid retry", async () => {
+    const { app } = makeApp({ extract: okExtract });
+    const seen = new Set<string>();
+    const account = privateKeyToAccount(generatePrivateKey());
+    const spy = async (input: RequestInfo | URL, init?: RequestInit) => {
+      const req = new Request(input as any, init);
+      for (const k of req.headers.keys()) if (!SAFELISTED.has(k)) seen.add(k);
+      return app.fetch(req);
+    };
+    const res = await wrapFetchWithPaymentFromConfig(spy as typeof fetch, { schemes: [{ network: "eip155:84532", client: new ExactEvmScheme(account) }] })(URL_OK);
+    expect(res.status).toBe(200);
+    expect(seen.has("payment-signature")).toBe(true);
+    const pre = await app.request(URL_OK, { method: "OPTIONS", headers: { Origin: "http://localhost:8000", "Access-Control-Request-Method": "GET", "Access-Control-Request-Headers": [...seen].join(",") } });
+    expect(pre.status).toBe(204);
+    const allowed = pre.headers.get("access-control-allow-headers")!.toLowerCase().split(/\s*,\s*/);
+    for (const h of seen) expect(allowed).toContain(h);
+  });
+  it("exposes PAYMENT-REQUIRED on the 402 so a browser can read the challenge", async () => {
+    const { app } = makeApp({ extract: okExtract });
+    const res = await app.request(URL_OK, { headers: { Origin: "http://localhost:8000" } });
+    expect(res.status).toBe(402);
+    expect(res.headers.get("access-control-allow-origin")).toBe("*");
+    expect(res.headers.get("access-control-expose-headers")).toContain("PAYMENT-REQUIRED");
+  });
+});

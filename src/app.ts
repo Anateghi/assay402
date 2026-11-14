@@ -58,7 +58,9 @@ export function createApp(deps: AppDeps) {
   });
   app.options("/v1/*", (c) => new Response(null, { status: 204, headers: {
     "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, PAYMENT-SIGNATURE, X-PAYMENT", "Access-Control-Max-Age": "86400" } }));
+    // @x402/fetch (2.28-2.31) sets an Access-Control-Expose-Headers *request* header on the paid retry,
+    // so it must be allowed here or browsers fail the preflight before the payment is sent.
+    "Access-Control-Allow-Headers": "Content-Type, PAYMENT-SIGNATURE, X-PAYMENT, Access-Control-Expose-Headers", "Access-Control-Max-Age": "86400" } }));
 
   // 1) Rate limit + concurrency cap before anything expensive.
   app.use("/v1/*", rateLimit(new TokenBucket(config.rateLimitPerMin, config.rateLimitPerMin / 60)));

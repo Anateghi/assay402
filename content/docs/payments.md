@@ -56,6 +56,10 @@ Your client signs an EIP-3009 `transferWithAuthorization` for exactly `amount` t
 
 > **Gotcha:** settlement can fail after the work is done (for example, if the payer spent the balance in between). In that case you get a `402` with the settlement error instead of the result.
 
+## Browser clients (CORS)
+
+Paid routes answer preflights with `Access-Control-Allow-Origin: *` and allow the `Content-Type`, `PAYMENT-SIGNATURE`, `X-PAYMENT`, and `Access-Control-Expose-Headers` request headers. `@x402/fetch` sets that last one on the paid retry. Every `/v1/*` response, the `402` included, exposes `PAYMENT-REQUIRED`, `PAYMENT-RESPONSE`, and `Retry-After`, so browser-based agents can read the challenge, the receipt, and rate-limit hints. See [x402 CORS](/blog/x402-cors-browser) for details.
+
 ## Network and asset
 
 | | Value |
